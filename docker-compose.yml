@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  server:
+    build:
+      context: ./mern-project/server
+    container_name: mern-server
+    restart: always
+    environment:
+      - ATLAS_URI=mongodb://mongo:27017
+      - PORT=5050
+    depends_on:
+      - mongo
+    ports:
+      - "5050:5050"
+
+  client:
+    build:
+      context: ./mern-project/client
+    container_name: mern-client
+    restart: always
+    depends_on:
+      - server
+    ports:
+      - "3000:80"
+
+volumes:
+  mongo-data:

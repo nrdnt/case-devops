@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mern-client
+  namespace: mern
+  labels:
+    app: mern-client
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mern-client
+  template:
+    metadata:
+      labels:
+        app: mern-client
+    spec:
+      containers:
+        - name: mern-client
+          image: your-account-id.dkr.ecr.your-region.amazonaws.com/case-mern-client:latest
+          ports:
+            - containerPort: 80

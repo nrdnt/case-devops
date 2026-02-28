@@ -22,6 +22,8 @@ MERN stack (React, Express, MongoDB) ve Python ETL uygulamasının containerize 
 | `k8s/` | Kubernetes manifest’leri (namespace, deployment, service, ingress, cronjob) |
 | `infra/terraform/aws/` | EKS, VPC, node group için Terraform |
 | `.github/workflows/` | MERN ve ETL için CI/CD (GitHub Actions) |
+| `docs-tr/` | Belgeler (Türkçe) |
+| `docs-eng/` | Documentation (English) |
 | `docker-compose.yml` | MERN’i yerelde çalıştırmak için |
 | `docker-compose.etl.yml` | ETL’i yerelde çalıştırmak için |
 
@@ -55,23 +57,21 @@ Detaylı adımlar için aşağıdaki belgelere bakın.
 
 ---
 
-## Belgeler
+## Belgeler / Documentation
 
-### Case belgeleri
+Belgeler iki dilde: **Türkçe** (`docs-tr/`) ve **İngilizce** (`docs-eng/`).
 
-Dağıtım süreci, mimari ve karşılaşılan zorlukların olduğu dökümanlar:
+**Case belgeleri (TR) / Case docs (EN):**
 
-- [**Mimari**](docs/ARCHITECTURE.md) — Bileşenler, veri akışı (MERN ve ETL).
-- [**Dağıtım süreci**](docs/DEPLOYMENT_PROCESS.md) — Önkoşullar, Terraform, ECR, Kubernetes deploy, CI/CD ve yapılandırma.
-- [**Karşılaşılan zorluklar ve alınan kararlar**](docs/CHALLENGES_AND_DECISIONS.md) — Yaşanan sorunlar ve çözümleri.
+- [**Mimari**](docs-tr/ARCHITECTURE.md) · [Architecture](docs-eng/ARCHITECTURE.md) — Bileşenler, veri akışı / Components, data flow.
+- [**Dağıtım süreci**](docs-tr/DEPLOYMENT_PROCESS.md) · [Deployment process](docs-eng/DEPLOYMENT_PROCESS.md) — Önkoşullar, Terraform, ECR, K8s, CI/CD.
+- [**Karşılaşılan zorluklar**](docs-tr/CHALLENGES_AND_DECISIONS.md) · [Challenges and decisions](docs-eng/CHALLENGES_AND_DECISIONS.md) — Sorunlar ve çözümleri / Issues and solutions.
 
-### Teknik belgeler
+**Teknik rehberler (TR) / Technical guides (EN):**
 
-Uygulama adımları ve ayarlar için dökümanlar:
-
-- [Kubernetes deploy](docs/kubernetes-deploy.md) — kubeconfig, ECR login/build/push, manifest apply, kontrol komutları.
-- [CI/CD](docs/cicd.md) — GitHub Secrets, workflow’lar, ECR repo isimleri.
-- [Logging ve uyarılar](docs/logging-and-alerts.md) — EKS logları, CloudWatch alarm, SNS, e-posta bildirimi.
+- [Kubernetes deploy (TR)](docs-tr/kubernetes-deploy.md) · [Kubernetes deploy (EN)](docs-eng/kubernetes-deploy.md) — kubeconfig, ECR, manifest apply, kontrol.
+- [CI/CD (TR)](docs-tr/cicd.md) · [CI/CD (EN)](docs-eng/cicd.md) — GitHub Secrets, workflow’lar.
+- [Logging ve uyarılar (TR)](docs-tr/logging-and-alerts.md) · [Logging and alerts (EN)](docs-eng/logging-and-alerts.md) — EKS logları, CloudWatch, SNS.
 - [Terraform (EKS)](infra/terraform/aws/README.md) — Terraform kullanımı, değişkenler, state.
 
 ---

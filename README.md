@@ -53,6 +53,8 @@ docker-compose -f docker-compose.etl.yml up --build
 4. `k8s/` manifest’lerindeki image URL’lerini ECR adresi ile güncellenmelidir.
 5. `kubectl apply -f k8s/mern/` ve `kubectl apply -f k8s/python/`
 
+--- 
+
 Aşağıda kurulum ve hazırlanması istenen belgeler mevcuttur.
 
 ---

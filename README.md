@@ -82,6 +82,6 @@ Belgeler iki dilde hazırlanmıştır:
 
 Tüm testler yapılmıştır. 
 
-- **MERN:** MongoDB bağlı; tüm endpoint’ler ve sayfalar çalışıyor.
-- **Python ETL:** `ETL.py` her 1 saatte bir (CronJob) çalışıyor.
+- **MERN:** MongoDB bağlı; tüm endpoint’ler ve sayfalar çalışıyor durumdadır.
+- **Python ETL:** `ETL.py` her 1 saatte bir (CronJob) çalışıyor durumdadır.
 

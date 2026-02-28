@@ -40,6 +40,10 @@ docker-compose -f docker-compose.etl.yml up --build
 
 Deploy sırası ve doğrulama komutları için `docs/kubernetes-deploy.md` dosyasına bak.
 
+## CI/CD (GitHub Actions)
+
+`main`’e push edildiğinde MERN ve ETL için ayrı workflow’lar çalışıyor: build → ECR push → EKS’te rollout/apply. GitHub repo’da **Secrets** olarak `AWS_ACCESS_KEY_ID` ve `AWS_SECRET_ACCESS_KEY` tanımlanması yeterli. Detay ve opsiyonel ayarlar: `docs/cicd.md`.
+
 ## Kabul kriterleri
 
 - **MERN:** MongoDB bağlı, tüm endpoint’ler ve sayfalar çalışıyor.

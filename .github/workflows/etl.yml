@@ -1,0 +1,49 @@
+name: ETL – Build, Push, Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'python-project/**'
+      - 'k8s/python/**'
+      - '.github/workflows/etl.yml'
+
+env:
+  AWS_REGION: eu-central-1
+  EKS_CLUSTER_NAME: case-devops-eks
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: ECR login
+        run: |
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
+            docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+
+      - name: Build and push – ETL
+        run: |
+          REGISTRY=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          docker build --platform linux/amd64 -t $REGISTRY/case-etl:latest ./python-project
+          docker push $REGISTRY/case-etl:latest
+
+      - name: Install kubectl
+        run: |
+          curl -sLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+
+      - name: Update kubeconfig and apply CronJob
+        run: |
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+          kubectl apply -f k8s/python/cronjob-etl.yaml
+          # Bir sonraki cron tetiklenene kadar yeni image kullanılır; istenirse manuel job da tetiklenebilir

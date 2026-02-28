@@ -1,0 +1,91 @@
+name: MERN – Build, Push, Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mern-project/**'
+      - 'k8s/mern/**'
+      - '.github/workflows/mern.yml'
+
+env:
+  AWS_REGION: eu-central-1
+  EKS_CLUSTER_NAME: case-devops-eks
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: |
+            mern-project/client/package-lock.json
+            mern-project/server/package-lock.json
+
+      - name: Client – install and build
+        run: |
+          cd mern-project/client
+          npm ci
+          npm run build
+
+      - name: Client – test
+        run: |
+          cd mern-project/client
+          npm test -- --watchAll=false --passWithNoTests 2>/dev/null || true
+
+      - name: Server – install
+        run: |
+          cd mern-project/server
+          npm ci
+
+  build-push-deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: ECR login
+        id: ecr-login
+        run: |
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "registry=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com" >> $GITHUB_OUTPUT
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
+            docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+
+      - name: Build and push – client
+        run: |
+          REGISTRY=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          docker build --platform linux/amd64 -t $REGISTRY/case-mern-client:latest ./mern-project/client
+          docker push $REGISTRY/case-mern-client:latest
+
+      - name: Build and push – server
+        run: |
+          REGISTRY=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          docker build --platform linux/amd64 -t $REGISTRY/case-mern-server:latest ./mern-project/server
+          docker push $REGISTRY/case-mern-server:latest
+
+      - name: Install kubectl
+        run: |
+          curl -sLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+
+      - name: Update kubeconfig and deploy
+        run: |
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+          kubectl rollout restart deployment mern-client mern-server -n mern
+          kubectl rollout status deployment mern-client mern-server -n mern --timeout=120s

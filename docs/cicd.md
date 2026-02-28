@@ -19,7 +19,7 @@ Bu iki secret yeterli. Workflow içinde `aws sts get-caller-identity` ile hesap 
   `mern-project/` veya `k8s/mern/` değişince: client + server için npm install, client build ve test, ardından her iki servis için Docker image (linux/amd64) build, ECR’e push, EKS’te `kubectl rollout restart deployment mern-client mern-server -n mern`.
 
 - **`.github/workflows/etl.yml`**  
-  `python-project/` veya `k8s/python/` değişince: ETL image build (linux/amd64), ECR’e push, `kubectl apply -f k8s/python/cronjob-etl.yaml` ile CronJob güncelleniyor (bir sonraki çalışmada yeni image kullanılır).
+  `python-project/` veya `k8s/python/` değişince: ETL image build (linux/amd64), ECR’e push, `kubectl apply -f k8s/python/cronjob-etl.yaml` ile CronJob güncelleniyor (bir sonraki çalıştırmada yeni image kullanılır durumda yapılandırdım).
 
 ## Varsayılanlar ve override
 

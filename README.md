@@ -1,50 +1,82 @@
 # case-devops
 
-Teknik değerlendirme kapsamında hazırlanan repo: MERN stack (React + Express + MongoDB) ve Python ETL’i containerize edip AWS EKS üzerinde çalıştırmak.
+MERN stack (React, Express, MongoDB) ve Python ETL uygulamasının containerize edilip AWS EKS üzerinde çalıştırıldığı teknik değerlendirme projesi.
+
+---
+
+## İçerik
+
+- **Proje 1 (MERN):** React frontend, Express backend, MongoDB — Kubernetes’te aynı namespace’te.
+- **Proje 2 (Python ETL):** `ETL.py` — CronJob ile her saat çalışır.
+
+İki proje birbirinden bağımsızdır; aynı cluster’da farklı namespace’lerde (`mern`, `python`) çalışır.
+
+---
 
 ## Repo yapısı
 
-- **mern-project/** — React frontend (`client`) ve Express backend (`server`), MongoDB ile
-- **python-project/** — ETL script’i (`ETL.py`), her saat çalışacak şekilde CronJob’da
-- **k8s/** — Kubernetes manifest’leri (namespace, deployment, service, ingress, cronjob)
-- **infra/terraform/aws/** — EKS, VPC ve node group için Terraform
+| Klasör / dosya | Açıklama |
+|----------------|----------|
+| `mern-project/` | React client + Express server (MongoDB ile) |
+| `python-project/` | ETL script’i |
+| `k8s/` | Kubernetes manifest’leri (namespace, deployment, service, ingress, cronjob) |
+| `infra/terraform/aws/` | EKS, VPC, node group için Terraform |
+| `.github/workflows/` | MERN ve ETL için CI/CD (GitHub Actions) |
+| `docker-compose.yml` | MERN’i yerelde çalıştırmak için |
+| `docker-compose.etl.yml` | ETL’i yerelde çalıştırmak için |
 
-İki proje birbirinden bağımsız; aynı cluster’da farklı namespace’lerde (mern, python) çalışıyor.
+---
 
-## Lokal çalıştırma
+## Hızlı başlangıç
 
-Docker ve Docker Compose yeterli. Projeler ayrı compose dosyalarında.
+### Yerel çalıştırma
 
-**MERN (mongo + backend + frontend):**
+**MERN:**
 ```bash
 docker-compose up --build
 ```
-Frontend: http://localhost:3000  
-Backend API: http://localhost:5050
+- Frontend: http://localhost:3000  
+- Backend: http://localhost:5050  
 
-**Python ETL (tek seferlik):**
+**Python ETL:**
 ```bash
 docker-compose -f docker-compose.etl.yml up --build
 ```
 
-## AWS’e deploy
+### AWS’e deploy (özet)
 
-1. **EKS cluster:** `infra/terraform/aws` içinde Terraform (önce `terraform init`, sonra `plan` / `apply`). Detay için klasördeki README’e bak.
-2. **kubeconfig:** Apply bittikten sonra `terraform output update_kubeconfig_command` çıktısındaki komutu çalıştır.
-3. **ECR:** Client, server ve ETL image’ları için ECR repo’ları oluştur; image’ları **linux/amd64** için build edip push et (Mac ARM kullanıyorsan `docker build --platform linux/amd64` şart).
-4. **Manifest’ler:** `k8s/mern/` ve `k8s/python/` içindeki deployment/cronjob’larda image URL’lerini kendi ECR adresinle güncelle, ardından:
-   ```bash
-   kubectl apply -f k8s/mern/
-   kubectl apply -f k8s/python/
-   ```
+1. `infra/terraform/aws` içinde `terraform init` → `terraform apply`
+2. `terraform output update_kubeconfig_command` çıktısıyla kubeconfig güncelle
+3. ECR repo’ları oluştur; image’ları **linux/amd64** ile build edip push et
+4. `k8s/` manifest’lerindeki image URL’lerini ECR adresinle güncelle
+5. `kubectl apply -f k8s/mern/` ve `kubectl apply -f k8s/python/`
 
-Deploy sırası ve doğrulama komutları için `docs/kubernetes-deploy.md` dosyasına bak.
+Detaylı adımlar için aşağıdaki belgelere bakın.
 
-## CI/CD (GitHub Actions)
+---
 
-`main`’e push edildiğinde MERN ve ETL için ayrı workflow’lar çalışıyor: build → ECR push → EKS’te rollout/apply. GitHub repo’da **Secrets** olarak `AWS_ACCESS_KEY_ID` ve `AWS_SECRET_ACCESS_KEY` tanımlanması yeterli. Detay ve opsiyonel ayarlar: `docs/cicd.md`.
+## Belgeler
 
-## Kabul kriterleri
+### Case belgeleri
 
-- **MERN:** MongoDB bağlı, tüm endpoint’ler ve sayfalar çalışıyor.
+Dağıtım süreci, mimari ve karşılaşılan zorlukların olduğu dökümanlar:
+
+- [**Mimari**](docs/ARCHITECTURE.md) — Bileşenler, veri akışı (MERN ve ETL).
+- [**Dağıtım süreci**](docs/DEPLOYMENT_PROCESS.md) — Önkoşullar, Terraform, ECR, Kubernetes deploy, CI/CD ve yapılandırma.
+- [**Karşılaşılan zorluklar ve alınan kararlar**](docs/CHALLENGES_AND_DECISIONS.md) — Yaşanan sorunlar ve çözümleri.
+
+### Teknik belgeler
+
+Uygulama adımları ve ayarlar için dökümanlar:
+
+- [Kubernetes deploy](docs/kubernetes-deploy.md) — kubeconfig, ECR login/build/push, manifest apply, kontrol komutları.
+- [CI/CD](docs/cicd.md) — GitHub Secrets, workflow’lar, ECR repo isimleri.
+- [Logging ve uyarılar](docs/logging-and-alerts.md) — EKS logları, CloudWatch alarm, SNS, e-posta bildirimi.
+- [Terraform (EKS)](infra/terraform/aws/README.md) — Terraform kullanımı, değişkenler, state.
+
+---
+
+## Sonuç
+
+- **MERN:** MongoDB bağlı; tüm endpoint’ler ve sayfalar çalışıyor.
 - **Python ETL:** `ETL.py` her 1 saatte bir (CronJob) çalışıyor.

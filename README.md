@@ -31,7 +31,7 @@ MERN stack (React, Express, MongoDB) ve Python ETL uygulamasının containerize 
 
 ## Hızlı başlangıç
 
-### Yerel çalıştırma
+### Local Çalıştırma
 
 **MERN:**
 ```bash
@@ -45,7 +45,7 @@ docker-compose up --build
 docker-compose -f docker-compose.etl.yml up --build
 ```
 
-### AWS’e deploy (özet)
+### AWS’e Deploy
 
 1. `infra/terraform/aws` içinde `terraform init` → `terraform apply`
 2. `terraform output update_kubeconfig_command` çıktısıyla kubeconfig güncelle
@@ -53,13 +53,15 @@ docker-compose -f docker-compose.etl.yml up --build
 4. `k8s/` manifest’lerindeki image URL’lerini ECR adresinle güncelle
 5. `kubectl apply -f k8s/mern/` ve `kubectl apply -f k8s/python/`
 
-Detaylı adımlar için aşağıdaki belgelere bakın.
+Kurulum için aşağıda belgeler mevcuttur.
 
 ---
 
 ## Belgeler / Documentation
 
-Belgeler iki dilde: **Türkçe** (`docs-tr/`) ve **İngilizce** (`docs-eng/`).
+Belgeler iki dilde hazırlanmıştır: 
+
+**Türkçe** (`docs-tr/`) ve **İngilizce** (`docs-eng/`).
 
 **Case belgeleri (TR) / Case docs (EN):**
 
@@ -67,7 +69,7 @@ Belgeler iki dilde: **Türkçe** (`docs-tr/`) ve **İngilizce** (`docs-eng/`).
 - [**Dağıtım süreci**](docs-tr/DEPLOYMENT_PROCESS.md) · [Deployment process](docs-eng/DEPLOYMENT_PROCESS.md) — Önkoşullar, Terraform, ECR, K8s, CI/CD.
 - [**Karşılaşılan zorluklar**](docs-tr/CHALLENGES_AND_DECISIONS.md) · [Challenges and decisions](docs-eng/CHALLENGES_AND_DECISIONS.md) — Sorunlar ve çözümleri / Issues and solutions.
 
-**Teknik rehberler (TR) / Technical guides (EN):**
+**Teknik Dökümanlar (TR) / Technical Documents (EN):**
 
 - [Kubernetes deploy (TR)](docs-tr/kubernetes-deploy.md) · [Kubernetes deploy (EN)](docs-eng/kubernetes-deploy.md) — kubeconfig, ECR, manifest apply, kontrol.
 - [CI/CD (TR)](docs-tr/cicd.md) · [CI/CD (EN)](docs-eng/cicd.md) — GitHub Secrets, workflow’lar.

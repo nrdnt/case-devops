@@ -1,45 +1,26 @@
-# AWS EKS Altyapısı (Terraform)
+# EKS altyapısı (Terraform)
 
-Bu klasör EKS cluster, VPC ve node group’u tanımlar.
+Bu klasörde EKS cluster, VPC ve node group tanımları var. Cluster’ı ilk kez kurarken buradan başlıyorum.
 
-## Önkoşullar
+**Gereksinimler:** Terraform 1.0+, AWS CLI yapılandırılmış (`aws configure`), EKS için yetkili IAM.
 
-- [Terraform](https://www.terraform.io/downloads) >= 1.0
-- [AWS CLI](https://aws.amazon.com/cli/) yapılandırılmış (`aws configure` ile access key, secret, region)
-- EKS için yeterli IAM yetkisi
-
-## Kullanım
+**Temel akış:**
 
 ```bash
 cd infra/terraform/aws
-
-# Bağımlılıkları indir
 terraform init
-
-# Planı incele
-terraform plan
-
-# Uygula (onay sonrası)
-terraform apply
+terraform plan   # ne oluşacak görmek için
+terraform apply  # onaylayıp bekliyorum (~10–15 dk)
 ```
 
-Apply sonrası `kubectl` kullanmak için:
+Apply bittikten sonra kubectl ile bağlanmak için:
 
 ```bash
-aws eks update-kubeconfig --region <region> --name <cluster_name>
+terraform output update_kubeconfig_command
 ```
 
-`terraform output update_kubeconfig_command` ile tam komutu görebilirsiniz.
+Çıkan komutu kopyalayıp çalıştırıyorum (ör. `aws eks update-kubeconfig --region eu-central-1 --name case-devops-eks`). Sonra `kubectl get nodes` ile node’ların Ready olmasını kontrol ediyorum.
 
-## Değişkenler
+**Değişkenler:** `variables.tf` içinde region (varsayılan eu-central-1), cluster adı, node sayısı ve instance tipleri var. Farklı bölge veya boyut için `terraform.tfvars` ya da `-var` kullanıyorum.
 
-- `aws_region` (varsayılan: `eu-central-1`)
-- `cluster_name` (varsayılan: `case-devops-eks`)
-- `node_desired_size`, `node_min_size`, `node_max_size`
-- `node_instance_types` (varsayılan: `["t3.medium"]`)
-
-Override için `terraform.tfvars` veya `-var` kullanılabilir.
-
-## State
-
-Şu an state lokal `terraform.tfstate` dosyasındadır. Production için S3 backend önerilir.
+**State:** Şu an local state kullanıyorum (`terraform.tfstate`). Prod’da S3 backend kullanmak daha doğru.

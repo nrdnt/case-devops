@@ -17,9 +17,9 @@ variable "environment" {
 }
 
 variable "node_instance_types" {
-  description = "EC2 instance types for EKS node group"
+  description = "EC2 instance types for EKS node group (birden fazla tip kapasite durumu)"
   type        = list(string)
-  default     = ["t3.medium"]
+  default     = ["t3.small", "t3.medium", "t2.small", "t2.medium"]
 }
 
 variable "node_desired_size" {

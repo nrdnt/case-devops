@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
         - name: mern-client
-          image: your-account-id.dkr.ecr.your-region.amazonaws.com/case-mern-client:latest
+          image: 090420481900.dkr.ecr.eu-central-1.amazonaws.com/case-mern-client:latest
           ports:
             - containerPort: 80

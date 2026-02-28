@@ -48,12 +48,12 @@ docker-compose -f docker-compose.etl.yml up --build
 ### AWS’e Deploy
 
 1. `infra/terraform/aws` içinde `terraform init` → `terraform apply`
-2. `terraform output update_kubeconfig_command` çıktısıyla kubeconfig güncelle
-3. ECR repo’ları oluştur; image’ları **linux/amd64** ile build edip push et
-4. `k8s/` manifest’lerindeki image URL’lerini ECR adresinle güncelle
+2. `terraform output update_kubeconfig_command` çıktısıyla kubeconfig güncellenmelidir.
+3. ECR repo’ları oluşturulmalıdır; image’ları **linux/amd64** ile build alınıp push'lanmalıdır.
+4. `k8s/` manifest’lerindeki image URL’lerini ECR adresi ile güncellenmelidir.
 5. `kubectl apply -f k8s/mern/` ve `kubectl apply -f k8s/python/`
 
-Kurulum için aşağıda belgeler mevcuttur.
+Aşağıda kurulum ve hazırlanması istenen belgeler mevcuttur.
 
 ---
 
@@ -80,5 +80,8 @@ Belgeler iki dilde hazırlanmıştır:
 
 ## Sonuç
 
+Tüm testler yapılmıştır. 
+
 - **MERN:** MongoDB bağlı; tüm endpoint’ler ve sayfalar çalışıyor.
 - **Python ETL:** `ETL.py` her 1 saatte bir (CronJob) çalışıyor.
+

@@ -21,6 +21,6 @@ terraform output update_kubeconfig_command
 
 Çıkan komutu kopyalayıp çalıştırıyorum (ör. `aws eks update-kubeconfig --region eu-central-1 --name case-devops-eks`). Sonra `kubectl get nodes` ile node’ların Ready olmasını kontrol ediyorum.
 
-**Değişkenler:** `variables.tf` içinde region (varsayılan eu-central-1), cluster adı, node sayısı ve instance tipleri var. Farklı bölge veya boyut için `terraform.tfvars` ya da `-var` kullanıyorum.
+**Değişkenler:** `variables.tf` içinde region (varsayılan eu-central-1), cluster adı, node sayısı ve instance tipleri var. Alarm bildirimi için `alert_email` (opsiyonel) tanımlanırsa SNS’e e-posta subscription ekleniyor; detay için `docs/logging-and-alerts.md`. Farklı bölge veya boyut için `terraform.tfvars` ya da `-var` kullanıyorum.
 
 **State:** Şu an local state kullanıyorum (`terraform.tfstate`). Prod’da S3 backend kullanmak daha doğru.

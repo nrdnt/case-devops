@@ -70,6 +70,8 @@ resource "aws_eks_cluster" "main" {
   role_arn = aws_iam_role.cluster.arn
   version  = "1.28"
 
+  enabled_cluster_log_types = ["api", "audit", "authenticator"]
+
   vpc_config {
     subnet_ids              = aws_subnet.public[*].id
     endpoint_private_access = false

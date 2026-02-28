@@ -36,3 +36,8 @@ output "update_kubeconfig_command" {
   description = "Run this command to configure kubectl"
   value       = "aws eks update-kubeconfig --region ${var.aws_region} --name ${aws_eks_cluster.main.name}"
 }
+
+output "sns_topic_arn" {
+  description = "Alarm bildirimleri için SNS topic ARN"
+  value       = aws_sns_topic.alerts.arn
+}

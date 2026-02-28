@@ -37,3 +37,9 @@ variable "node_max_size" {
   type    = number
   default = 3
 }
+
+variable "alert_email" {
+  description = "Alarm bildirimleri için e-posta (boş bırakılırsa SNS subscription oluşturulmaz; ilk apply sonrası e-postadan confirm gerekir)"
+  type        = string
+  default     = ""
+}
